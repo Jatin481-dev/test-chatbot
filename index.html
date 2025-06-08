@@ -1,0 +1,223 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jatin's Karyana Chatbot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="chatbot-container">
+        <div id="header">
+            <i class="fa-solid fa-store"></i> Karyana Chatbot
+        </div>
+        <div id="chatbot">
+            <div id="conversation">
+                <div class="chatbot-message">
+                    <div class="avatar"><i class="fa-solid fa-robot"></i></div>
+                    <p class="chatbot-text">Hi! Main Jatinkumar ka Karyana Chatbot hoon. Karyana se related kuch bhi poochhiye!</p>
+                </div>
+            </div>
+            <form id="input-form" autocomplete="off">
+                <input id="input-field" type="text" placeholder="Type your message here..." autocomplete="off" required>
+                <button id="submit-button" type="submit">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+   
+    <script>
+        const conversation = document.getElementById('conversation');
+        const inputForm = document.getElementById('input-form');
+        const inputField = document.getElementById('input-field');
+
+        function addMessage(text, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('chatbot-message');
+            if (isUser) messageDiv.classList.add('user-message');
+
+            // Avatar
+            const avatarDiv = document.createElement('div');
+            avatarDiv.classList.add('avatar');
+            avatarDiv.innerHTML = isUser
+                ? '<i class="fa-solid fa-user"></i>'
+                : '<i class="fa-solid fa-robot"></i>';
+
+            // Message
+            const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: "2-digit" });
+            const textP = document.createElement('p');
+            textP.className = 'chatbot-text';
+            textP.setAttribute('sentTime', currentTime);
+            textP.innerText = text;
+
+            if (isUser) {
+                messageDiv.appendChild(textP);
+                messageDiv.appendChild(avatarDiv);
+            } else {
+                messageDiv.appendChild(avatarDiv);
+                messageDiv.appendChild(textP);
+            }
+            conversation.appendChild(messageDiv);
+            conversation.scrollTop = conversation.scrollHeight;
+        }
+
+        inputForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const input = inputField.value.trim();
+            if (!input) return;
+            addMessage(input, true);
+            inputField.value = '';
+
+            // Show loading animation
+            const loadingDiv = document.createElement('div');
+            loadingDiv.classList.add('chatbot-message');
+            loadingDiv.innerHTML = `
+                <div class="avatar"><i class="fa-solid fa-robot"></i></div>
+                <p class="chatbot-text">Typing<span class="dot-anim">...</span></p>
+            `;
+            conversation.appendChild(loadingDiv);
+            conversation.scrollTop = conversation.scrollHeight;
+
+            // Get response
+            const response = await generateResponse(input);
+
+            // Remove loading and add actual response
+            conversation.removeChild(loadingDiv);
+            addMessage(response, false);
+        });
+
+        async function generateResponse(input) {
+            try {
+                const response = await fetch('http://localhost:3000/chat', {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: input })
+                });
+                const data = await response.json();
+                return data.reply || "Sorry, I couldn't get a response.";
+            } catch (error) {
+                return "Sorry, there was an error connecting to the backend: " + error.message;
+            }
+        }
+    </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jatin's Karyana Chatbot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="chatbot-container">
+        <div id="header">
+            <i class="fa-solid fa-store"></i> Karyana Chatbot
+        </div>
+        <div id="chatbot">
+            <div id="conversation">
+                <div class="chatbot-message">
+                    <div class="avatar"><i class="fa-solid fa-robot"></i></div>
+                    <p class="chatbot-text">Hi! Main Jatinkumar ka Karyana Chatbot hoon. Karyana se related kuch bhi poochhiye!</p>
+                </div>
+            </div>
+            <form id="input-form" autocomplete="off">
+                <input id="input-field" type="text" placeholder="Type your message here..." autocomplete="off" required>
+                <button id="submit-button" type="submit">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+   
+    <script>
+        const conversation = document.getElementById('conversation');
+        const inputForm = document.getElementById('input-form');
+        const inputField = document.getElementById('input-field');
+
+        // Set backend URL based on environment
+        const backendUrl =
+            window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+                ? "http://localhost:3000/chat"
+                : "https://karyana-chatbot.vercel.app/api/chat";
+
+        function addMessage(text, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('chatbot-message');
+            if (isUser) messageDiv.classList.add('user-message');
+
+            // Avatar
+            const avatarDiv = document.createElement('div');
+            avatarDiv.classList.add('avatar');
+            avatarDiv.innerHTML = isUser
+                ? '<i class="fa-solid fa-user"></i>'
+                : '<i class="fa-solid fa-robot"></i>';
+
+            // Message
+            const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: "2-digit" });
+            const textP = document.createElement('p');
+            textP.className = 'chatbot-text';
+            textP.setAttribute('sentTime', currentTime);
+            textP.innerText = text;
+
+            if (isUser) {
+                messageDiv.appendChild(textP);
+                messageDiv.appendChild(avatarDiv);
+            } else {
+                messageDiv.appendChild(avatarDiv);
+                messageDiv.appendChild(textP);
+            }
+            conversation.appendChild(messageDiv);
+            conversation.scrollTop = conversation.scrollHeight;
+        }
+
+        inputForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const input = inputField.value.trim();
+            if (!input) return;
+            addMessage(input, true);
+            inputField.value = '';
+
+            // Show loading animation
+            const loadingDiv = document.createElement('div');
+            loadingDiv.classList.add('chatbot-message');
+            loadingDiv.innerHTML = `
+                <div class="avatar"><i class="fa-solid fa-robot"></i></div>
+                <p class="chatbot-text">Typing<span class="dot-anim">...</span></p>
+            `;
+            conversation.appendChild(loadingDiv);
+            conversation.scrollTop = conversation.scrollHeight;
+
+            // Get response
+            const response = await generateResponse(input);
+
+            // Remove loading and add actual response
+            conversation.removeChild(loadingDiv);
+            addMessage(response, false);
+        });
+
+        async function generateResponse(input) {
+            try {
+                const response = await fetch(backendUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: input })
+                });
+                const data = await response.json();
+                return data.reply || "Sorry, I couldn't get a response.";
+            } catch (error) {
+                return "Sorry, there was an error connecting to the backend: " + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
